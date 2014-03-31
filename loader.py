@@ -21,10 +21,10 @@ class Drives:
 class DBusManager:
     """A manager of DBus objects."""
 
-    def __init__(self, event_loop):
-        self.bus = dbus.SystemBus(mainloop=event_loop)
         self.dbus_obj = bus.get_object("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2")
         self.dbus_manager = dbus.Interface(obj, "org.freedesktop.DBus.ObjectManager")
+    def __init__(self):
+        self.bus = dbus.SystemBus(mainloop=DBusGMainLoop())
         # managed_objects = manager.GetManagedObjects()
         self.dbus_manager.connect_to_signal("InterfacesAdded", self._on_interfaces_added)
         self.dbus_manager.connect_to_signal("InterfacesRemoved", self._on_interfaces_removed)
@@ -83,7 +83,7 @@ class RpiIO:
 
 def main():
     loop = GObject.MainLoop()
-    manager = DBusManager(loop)
+    manager = DBusManager()
     try:
         loop.run()
     except KeyboardInterrupt:
